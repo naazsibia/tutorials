@@ -36,16 +36,17 @@ int do_child(int argc, char **argv) {
 int wait_for_syscall(pid_t child);
 
 int do_trace(pid_t child) {
-    int status, syscall, retval;
+    long syscall, retval;
+    int status;
     waitpid(child, &status, 0);
     ptrace(PTRACE_SETOPTIONS, child, 0, PTRACE_O_TRACESYSGOOD);
     while(1) {
         if (wait_for_syscall(child) != 0) break; // if this returns 0, child has exited
-        syscall = ptrace(PTRACE_PEEKUSER, child, sizeof(long)*ORIG_EAX);
-        fprintf(stderr, "syscall(%d) = ", syscall);
+        syscall = ptrace(PTRACE_PEEKUSER, child, sizeof(long)*ORIG_RAX);
+        fprintf(stderr, "syscall(%ld) = ", syscall);
         if (wait_for_syscall(child) != 0) break;
-        retval = ptrace(PTRACE_PEEKUSER, child, sizeof(long)*EAX);
-        fprintf(stderr, "%d\n", retval);
+        retval = ptrace(PTRACE_PEEKUSER, child, sizeof(long)*RAX);
+        fprintf(stderr, "%ld\n", retval);
     }
     return 0;
 }
