@@ -1,3 +1,11 @@
+/*
+Makes a Binary Search tree to keep track of processes the tracer gets attached to. Deletes the process when it exits. 
+When no processes are left, the tracer exits as well. Shows how to extract PID of cloned process by using: 
+ptrace(PTRACE_GETEVENTMSG, child, NULL, (long) &newpid); // LOOK UP HOW TO SEE CURRENT PROCESS'S PID
+*/
+
+
+
 // dontfork.c, a little ptrace utility that traces all child process
 // and exits only when the latest spawned child is dead
 #include <assert.h>
@@ -279,6 +287,7 @@ int do_trace(pid_t child) {
 		if (WSTOPEVENT(status) == PTRACE_EVENT_FORK ||
 			WSTOPEVENT(status) == PTRACE_EVENT_VFORK ||
 			WSTOPEVENT(status) == PTRACE_EVENT_CLONE) {
+			printf("My process id %d\n", getpid());
 			ptrace(PTRACE_GETEVENTMSG, child, NULL, (long) &newpid);
 			ptrace(PTRACE_SYSCALL, newpid, NULL, NULL);
 
