@@ -287,7 +287,7 @@ int do_trace(pid_t child) {
 		if (WSTOPEVENT(status) == PTRACE_EVENT_FORK ||
 			WSTOPEVENT(status) == PTRACE_EVENT_VFORK ||
 			WSTOPEVENT(status) == PTRACE_EVENT_CLONE) {
-			printf("My process id %d\n", getpid());
+			printf("Parent's process id %d\n", child);
 			ptrace(PTRACE_GETEVENTMSG, child, NULL, (long) &newpid);
 			ptrace(PTRACE_SYSCALL, newpid, NULL, NULL);
 
